@@ -7,7 +7,7 @@ export default function NavBar() {
             <div className="nav-left">
                 <span className="brand">Inventory Management System</span>
                 <NavLink
-                    to="/"
+                    to="/home"
                     end
                     className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}
                 >
