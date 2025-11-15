@@ -1,53 +1,143 @@
-import React, { useState } from "react";
-import api from "../api";
-import { useNavigate, Link } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import '../Auth.css';
 
-export default function Login() {
-    const [form, setForm] = useState({ email: "", password: "" });
-    const [error, setError] = useState("");
-    const navigate = useNavigate();
+/**
+ * LOGIN COMPONENT
+ * Purpose: Authenticate users and redirect to dashboard
+ * User Story: IMS-01 - Employee can log into the application
+ * 
+ * Features:
+ * - Email and password input fields
+ * - Client-side validation (handled by Justine's task)
+ * - Error message display
+ * - Link to registration and forgot password
+ */
 
-    const submit = async (e) => {
-        e.preventDefault();
-        setError("");
-        try {
-            const { data } = await api.post("/auth/login", form);
-            // store token
-            localStorage.setItem("token", data.token);
-            navigate("/home");
-        } catch (err) {
-            setError("Invalid email or password");
-        }
-    };
+const Login = () => {
+  const navigate = useNavigate();
+  
+  // State management for form inputs and feedback
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-    return (
-        <div className="auth-shell">
-            <div className="auth-card">
-                <h1>Sign in</h1>
-                <p className="muted">Access your inventory dashboard.</p>
-                {error && <div className="error-box">{error}</div>}
-                <form onSubmit={submit} className="auth-form">
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        required
-                    />
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        value={form.password}
-                        onChange={(e) => setForm({ ...form, password: e.target.value })}
-                        required
-                    />
-                    <button type="submit">Login</button>
-                </form>
-                <div className="auth-links">
-                    <Link to="/forgot-password">Forgot password?</Link>
-                    <Link to="/register">Create an account</Link>
-                </div>
-            </div>
+  // Handle input changes
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+    setError(''); // Clear error when user types
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    // Basic client-side validation (Justine will enhance this)
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all fields');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // API call to backend (David S will create this endpoint)
+      const response = await axios.post('http://localhost:5000/api/auth/login', formData);
+      
+      // Store JWT token (David S's task)
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      
+      // Redirect to dashboard
+      navigate('/home');
+    } catch (err) {
+      // Display error from server (David C's error handling)
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h1>Inventory Management System</h1>
+          <h2>Login</h2>
         </div>
-    );
-}
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          {/* Error Message Display */}
+          {error && (
+            <div className="error-message">
+              <span className="error-icon">⚠️</span>
+              {error}
+            </div>
+          )}
+
+          {/* Email Input */}
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          {/* Password Input */}
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          {/* Forgot Password Link (Mutaz's task) */}
+          <div className="form-links">
+            <Link to="/forgot-password" className="link">
+              Forgot Password?
+            </Link>
+          </div>
+
+          {/* Submit Button */}
+          <button 
+            type="submit" 
+            className="btn-primary"
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+
+          {/* Register Link (Jeremiah's task - see below) */}
+          <div className="form-footer">
+            <p>Don't have an account?</p>
+            <Link to="/register" className="link-primary">
+              Register Here
+            </Link>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
