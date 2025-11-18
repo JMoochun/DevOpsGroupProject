@@ -63,6 +63,13 @@
   font-size: 18px;
 }
 
+.field-error {
+    color: #e63946;
+    font-size: 0.9rem;
+    margin: 4px 0 0 2px;
+    font-weight: 500;
+}
+
 .success-message {
   background-color: #efe;
   border: 1px solid #cfc;
