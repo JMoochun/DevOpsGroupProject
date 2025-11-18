@@ -25,6 +25,25 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
+
+  // Justine: Validates the email and password fields
+  const validateFields = (data) => {
+      const errors = {};
+
+      if (!data.email.trim()) {
+          errors.email = "Email is required";
+      } else if (!/^\S+@\S+\.\S+$/.test(data.email)) {
+          errors.email = "Invalid email format";
+      }
+
+      if (!data.password.trim()) {
+          errors.password = "Password is required";
+      } else if (data.password.length < 6) {
+          errors.password = "Password must be at least 6 characters";
+      }
+        return errors;
+    };
 
   // Handle input changes
   const handleChange = (e) => {
@@ -32,6 +51,12 @@ const Login = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+
+    setFieldErrors({
+       ...fieldErrors,
+       [e.target.name]: ""
+      });
+
     setError(''); // Clear error when user types
   };
 
@@ -40,13 +65,14 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setFieldErrors({});
 
-    // Basic client-side validation (Justine will enhance this)
-    if (!formData.email || !formData.password) {
-      setError('Please fill in all fields');
+  const errors = validateFields(formData);
+  if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       setLoading(false);
       return;
-    }
+   }
 
     try {
       // API call to backend (David S will create this endpoint)
@@ -74,7 +100,7 @@ const Login = () => {
           <h2>Login</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleSubmit} className="auth-form" noValidate>
           {/* Error Message Display */}
           {error && (
             <div className="error-message">
@@ -87,14 +113,16 @@ const Login = () => {
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
             <input
-              type="email"
+              type="text"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              required
             />
+              {fieldErrors.email && (
+               <p className="field-error">{fieldErrors.email }</p>
+               )}
           </div>
 
           {/* Password Input */}
@@ -107,8 +135,10 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              required
             />
+              {fieldErrors.password && (
+               <p className="field-error">{fieldErrors.password}</p>
+              )}
           </div>
 
           {/* Forgot Password Link (Mutaz's task) */}
