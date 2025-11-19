@@ -50,38 +50,64 @@ const Register = () => {
   // Client-side validation (Justine will enhance this)
   const validateForm = () => {
     const newErrors = {};
+    const trimmedName = formData.name.trim();
+    const trimmedEmail = formData.email.trim();
+    const password = formData.password;
+    const confirmPassword = formData.confirmPassword;
 
     // Name validation
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    } else if (formData.name.length < 2) {
-      newErrors.name = 'Name must be at least 2 characters';
-    }
+      if (!trimmedName) {
+          newErrors.name = "Name is required.";
+      } else if (trimmedName.length < 2) {
+          newErrors.name = "Name must be at least 2 characters";
+      } else if (!/^[A-Za-z\s]+$/.test(trimmedName)) {
+          newErrors.name = "Name may only contain letters and spaces";
+      }
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
+      if (!trimmedEmail) {
+          newErrors.email = "Email is required";
+      } else if (!emailRegex.test(trimmedEmail)) {
+          newErrors.email = "Please enter a valid email address";
+      }
 
     // Password validation
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
+      if (!password) {
+          newErrors.password = "Password is required";
+      } else {
+          const passwordErrors = [];
 
+          if (password.lenth < 6) {
+              passwordErrors.push("* Must be at least 6 characters");
+          }
+          if (!/[A-Z]/.test(password)) {
+              passwordErrors.push("* Must contain at least 1 uppercase letter");
+          }
+          if (!/[a-z]/.test(password)) {
+              passwordErrors.push("* Must contain at least 1 lowercase letter");
+          }
+          if (!/\d/.test(password)) {
+              passwordErrors.push("* Must contain at least 1 number");
+          }
+          if (!/[!@#$%^&*]/.test(password)) {
+              passwordErrors.push("* Must contain at least 1 special character (!@#$%^&*)");
+          }
+          if (passwordErrors.length > 0) {
+              newErrors.password = passwordErrors.join("\n");
+          }
+      }
+      
     // Confirm password validation
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
+      if (password != confirmPassword) {
+          newErrors.confirmPassword = "Passwords do not match.";
+      }
 
     // Role validation
-    if (!formData.role) {
-      newErrors.role = 'Please select a role';
-    }
+      const allowedRoles = ['Employee', 'Manager', 'Accountant', 'IT Support'];
+      if (!allowedRoles.includes(formData.role)) {
+          newErrors.role = "Invalid role selected";
+      }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -99,14 +125,16 @@ const Register = () => {
 
     setLoading(true);
 
+    const trimmedData = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        password: formData.password.trim(),
+        role: formData.role
+    };
+
     try {
       // API call to backend (David S will create endpoint, Davi handles hashing)
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role
-      });
+        const _response = await axios.post('http://localhost:5000/api/auth/register', trimmedData);
 
       // Show success and redirect to login
       alert('Registration successful! Please login.');
@@ -182,7 +210,11 @@ const Register = () => {
               placeholder="At least 6 characters"
               className={errors.password ? 'input-error' : ''}
             />
-            {errors.password && <span className="field-error">{errors.password}</span>}
+             {errors.password && (
+                 <div className="field-error" style={{ whiteSpace: "pre-line" }}>
+                     {errors.password}
+                 </div>
+             )}
           </div>
 
           {/* Confirm Password Input */}
