@@ -1,0 +1,98 @@
+/* Full-screen dark overlay behind the modal */
+.product-modal-overlay {
+    position: fixed;
+    inset: 0;                 
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;                
+}
+
+/* The white box that appears in the center */
+.product-modal-box {
+    background: #ffffff;
+    width: 500px;                 
+    max-width: 95vw;              /* prevent overflow on small screens */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: product-modal-fade-in 0.2s ease-in-out;
+}
+
+/* Fade-in animation */
+@keyframes product-modal-fade-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* Header row inside modal */
+.product-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Close (X) button */
+.product-modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Form layout inside modal */
+.product-modal-form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+/* Text inputs in modal */
+.product-modal-form input {
+    padding: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+/* Button row at the bottom */
+.product-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Primary button (submit) */
+.product-modal-primary-btn {
+    padding: 8px 16px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Secondary button (cancel) */
+.product-modal-secondary-btn {
+    padding: 8px 16px;
+    background: #ddd;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Align Add Product button to the right */
+.add-product-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin: 20px 0;
+}
+
+/* Shrink the button width */
+.add-product-btn {
+    width: auto;
+    padding: 8px 16px;      /* standard button sizing */
+    display: inline-block;
+}
