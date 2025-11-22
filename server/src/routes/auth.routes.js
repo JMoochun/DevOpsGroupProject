@@ -19,8 +19,11 @@ router.post('/register', async (req, res) => {
     const {firstName, lastName, email, password, role} = req.body;
     
     try{
-        //check for existing emails (needs to be added)
-
+        //check for existing emails 
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "Email already registered" });
+        }
         //hash password
         const saltRounds = 10; //most common value but can be adjusted 
         const hashedPassword = await bcrypt.hash(password, saltRounds); 
@@ -34,6 +37,23 @@ router.post('/register', async (req, res) => {
         res.status(500).json({message: 'An error occurred'});
     }
 }); 
+//invalid email/password logic
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+        return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    res.json({ message: "Login successful" });
+});
+
 
 
 router.post('/forgot-password', async (req, res) => {

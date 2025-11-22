@@ -58,6 +58,23 @@ export default function ProductModal({
                 : value
         }));
     };
+    //client side validation for empty fields and valid numbers
+    const validateForm = () => {
+    if (!formData.name.trim()) return "Product name cannot be empty.";
+    if (!formData.sku.trim()) return "SKU cannot be empty.";
+    if (!formData.category.trim()) return "Category cannot be empty.";
+
+    if (isNaN(formData.quantity) || formData.quantity < 0)
+        return "Quantity must be a valid non-negative number.";
+
+    if (isNaN(formData.costPrice) || formData.costPrice < 0)
+        return "Cost price must be a valid non-negative number.";
+
+    if (isNaN(formData.salePrice) || formData.salePrice < 0)
+        return "Sale price must be a valid non-negative number.";
+
+    return null; // no errors
+};
 
     // Handle the submit action inside the modal
     const handleSubmit = (e) => {
