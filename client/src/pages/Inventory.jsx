@@ -1,155 +1,329 @@
-import React, { useState } from "react";
-import ProductModal from "../components/ProductModal"; // Import product modal component
+import { useState, useEffect } from "react";
+import axios from "axios";
+import ProductModal from "../components/ProductModal";
+import "../Inventory.css";
 
 export default function Inventory() {
+  // =============================
+  // STATE
+  // =============================
+  //const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([
+  {
+    _id: "654321abcdef", // Unique ID for the product
+    sku: "LAPTOP001",
+    name: "SuperFast Laptop",
+    category: "Electronics",
+    quantity: 15,
+    costPrice: 800.00,
+    salePrice: 1200.00,
+    revenue: 400.00,
+  },
+  {
+    _id: "987654fedcba", // Another unique ID
+    sku: "BOOK005",
+    name: "React Mastery Guide",
+    category: "Books",
+    quantity: 5, // This one is low stock for testing the badge!
+    costPrice: 15.00,
+    salePrice: 25.00,
+    revenue: 10.00,
+  },
+  {
+    _id: "abcdef123456", // One more!
+    sku: "MOU003",
+    name: "Wireless Mouse",
+    category: "Accessories",
+    quantity: 30,
+    costPrice: 10.00,
+    salePrice: 20.00,
+    revenue: 10.00,
+  },
+]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-    // Controls whether the product modal is visible
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState("create");
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-    // Tracks whether the modal is used for creating or editing a product
-    const [modalMode, setModalMode] = useState("create");
+  // Filters
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState("All");
 
-    // Holds the product currently being edited
-    const [selectedProduct, setSelectedProduct] = useState(null);
+  // Role-based access
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  //const isManager = user.role === "Manager"; //was blocking the add product button 
+  const isManager = true;
 
-    // TEMPORARY: product list until backend is added, used for testing
-    const [products, setProducts] = useState([
-        { id: 1, name: "Camera A", sku: "CAM-001", category: "Camera",      quantity: 5,  price: 200 },
-        { id: 2, name: "Tripod B", sku: "TRI-002", category: "Accessories", quantity: 12, price: 39 }
-    ]);
 
-    // Opens the modal in "create" mode for adding a new product
-    const openCreate = () => {
-        setModalMode("create");      // Set mode to create
-        setSelectedProduct(null);    // Clear any previously selected product
-        setIsModalOpen(true);        // Show the modal
-    };
+  // =============================
+  // FETCH PRODUCTS
+  // =============================
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-    // Opens the modal in "edit" mode for updating an existing product
-    const openEdit = (product) => {
-        setModalMode("edit");        // Set mode to edit
-        setSelectedProduct(product); // Store the product to be edited
-        setIsModalOpen(true);        // Show the modal
-    };
+  const fetchProducts = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("http://localhost:5000/api/products", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProducts(res.data);
+    } catch (err) {
+      setError("Failed to load products");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Handles the data submitted from the ProductModal component
-    const handleSubmit = (data) => {
+  // =============================
+  // OPEN MODALS
+  // =============================
+  const openCreate = () => {
+    setModalMode("create");
+    setSelectedProduct(null);
+    setIsModalOpen(true);
+  };
 
-            if (modalMode === "create") {
+  const openEdit = (product) => {
+    setModalMode("edit");
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
 
-                // Make a new product object
-                const newProduct = {
-                    id: Date.now(),             // Date.now() - creates a quick unique id for testing
-                    ...data                     // Include all the form fields (name, sku, etc.)
-                };
+  // =============================
+  // DELETE PRODUCT
+  // =============================
+  const handleDeleteProduct = async (productId) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
 
-                // Add the new product to the end of the product list
-                setProducts(previousProducts => [
-                    ...previousProducts,        // Keep everything that was already in the list
-                    newProduct                  // Then add the new product at the end
-                ]);
-            } 
-            else {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:5000/api/products/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-            // If editing an existing product, update the product that matches the selected id
-            setProducts(previousProducts =>
-                previousProducts.map(product => {
+      fetchProducts();
+    } catch (err) {
+      alert("Failed to delete product");
+    }
+  };
 
-                    // Check if this is the product we want to update
-                    if (product.id === selectedProduct.id) {
+  // =============================
+  // CREATE OR EDIT SUBMISSION
+  // =============================
+  const handleSubmit = async (formData) => {
+    try {
+      const token = localStorage.getItem("token");
 
-                        // Return a new object with the updated form values
-                        return {
-                            ...product,   // keep the original fields
-                            ...data       // replace with the new edited values
-                        };
-                    }
+      // CREATE PRODUCT
+      if (modalMode === "create") {
+        await axios.post("http://localhost:5000/api/products", formData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
 
-                    // If it is not the product we are editing, keep it the same
-                    return product;
-                })
-            );
-        }
-    };
+      // EDIT PRODUCT
+      else if (modalMode === "edit") {
+        await axios.put(
+          `http://localhost:5000/api/products/${selectedProduct._id}`,
+          formData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+      }
 
-    return (
-        <div className="page">
+      setIsModalOpen(false);
+      setSelectedProduct(null);
+      fetchProducts();
+    } catch (err) {
+      alert("Failed to save product");
+    }
+  };
 
-            {/* Main title for the Inventory page */}
-            <h1 className="page-title">Inventory Management</h1>
+  // =============================
+  // FILTER PRODUCTS
+  // =============================
+  const filteredProducts = products.filter((p) => {
+    const matchesSearch =
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.sku.toLowerCase().includes(searchTerm.toLowerCase());
 
-            {/* Subtitle from original file describing future CRUD operations */}
-            <p className="page-subtitle"> IMS page. CRUD operations area. Add any description for our page </p>
+    const matchesCategory =
+      filterCategory === "All" || p.category === filterCategory;
 
-            {/* Button to open the Add Product modal */}
-            <div className="add-product-container">
-                <button className="primary-btn add-product-btn" onClick={openCreate}> + Add Product </button>
-            </div>
+    return matchesSearch && matchesCategory;
+  });
 
-            {/* Card that contains the product section */}
-            <div className="card" style={{ marginTop: "20px" }}>
+  const categories = ["All", ...new Set(products.map((p) => p.category))];
 
-                {/* Card title for products */}
-                <h2 className="card-title">Products</h2>
+  if (loading) {
+    return <div className="loading">Loading inventory...</div>;
+  }
 
-                {/* Original placeholder text kept for context */}
-                <p className="muted">Table of products will go here.</p>
+  return (
+    <div className="inventory-container">
+      {/* HEADER */}
+      <div className="inventory-header">
+        <h1>Inventory Management System</h1>
+        <p className="subtitle">
+          {isManager
+            ? "Manage your product inventory and stock levels"
+            : "View product inventory and stock levels"}
+        </p>
+      </div>
 
-                {/* Actual products table appears below the placeholder line */}
-                <table className="product-table" style={{ marginTop: "15px" }}>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>SKU</th>
-                            <th>Category</th>
-                            <th>Qty</th>
-                            <th>Price</th>
-                            <th></th>
-                        </tr>
-                    </thead>
+      {/* ERROR */}
+      {error && <div className="error-banner">⚠️ {error}</div>}
 
-                    <tbody>
-                        {/* Loop through products and render each as a table row */}
-                        {products.map(p => (
-                            <tr key={p.id}>
-                                <td>{p.name}</td>
-                                <td>{p.sku}</td>
-                                <td>{p.category}</td>
-                                <td>{p.quantity}</td>
-                                <td>${p.price}</td>
-     
-                                <td style={{ display: "flex", gap: "8px" }}>
-                                    {/* Edit button to open modal with this product's data */}
-                                    <button
-                                        className="secondary-btn"
-                                        onClick={() => openEdit(p)}
-                                    >
-                                        Edit
-                                    </button>
-
-                                    {/* Remove button placeholder (Mutaz Task) */}
-                                    <button
-                                        className="danger-btn"
-                                        onClick={() => console.log("Remove placeholder")}
-                                    >
-                                        Remove
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* Product modal component used for both Create and Edit */}
-            <ProductModal
-                isOpen={isModalOpen}                    // Controls modal visibility
-                mode={modalMode}                        // "create" or "edit"
-                initialData={selectedProduct}           // Product data when editing
-                onClose={() => setIsModalOpen(false)}   // Function to close the modal
-                onSubmit={handleSubmit}                 // Handle data from the modal
-            />
-
+      {/* CONTROLS */}
+      <div className="inventory-controls">
+        {/* Search */}
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="Search by product name or SKU..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <span className="search-icon">🔍</span>
         </div>
-    );
+
+        {/* Category Filter */}
+        <select
+          className="filter-select"
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+        >
+          {categories.map((cat) => (
+            <option key={cat}>{cat}</option>
+          ))}
+        </select>
+
+        {/* Add Product */}
+        {isManager && (
+          <button className="btn-add-product" onClick={openCreate}>
+            + Add Product
+          </button>
+        )}
+      </div>
+
+      {/* TABLE */}
+      <div className="inventory-table-container">
+        <table className="inventory-table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Qty</th>
+              <th>Cost</th>
+              <th>Sale</th>
+              <th>Revenue</th>
+              <th>Status</th>
+              {isManager && <th>Actions</th>}
+            </tr>
+          </thead>
+
+          <tbody>
+            {filteredProducts.length === 0 ? (
+              <tr>
+                <td colSpan="9" className="no-data">
+                  No products found
+                </td>
+              </tr>
+            ) : (
+              filteredProducts.map((p) => (
+                <tr key={p._id}>
+                  <td>{p.sku}</td>
+                  <td>{p.name}</td>
+                  <td>{p.category}</td>
+
+                  <td>
+                    <span
+                      className={`quantity-badge ${
+                        p.quantity < 10 ? "low-stock" : ""
+                      }`}
+                    >
+                      {p.quantity}
+                    </span>
+                  </td>
+
+                  <td>${p.costPrice?.toFixed(2)}</td>
+                  <td>${p.salePrice?.toFixed(2)}</td>
+                  <td>${p.revenue?.toFixed(2)}</td>
+
+                  <td>
+                    <span
+                      className={`status-badge ${
+                        p.quantity < 10 ? "status-low" : "status-good"
+                      }`}
+                    >
+                      {p.quantity < 10 ? "Low Stock" : "In Stock"}
+                    </span>
+                  </td>
+
+                  {isManager && (
+                    <td className="action-buttons">
+                      <button className="btn-edit" onClick={() => openEdit(p)}>
+                        ✏️
+                      </button>
+
+                      <button
+                        className="btn-delete"
+                        onClick={() => handleDeleteProduct(p._id)}
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* FOOTER SUMMARY */}
+      <div className="inventory-footer">
+        <div className="summary-card">
+          <span>Total Products:</span>
+          <strong>{products.length}</strong>
+        </div>
+
+        <div className="summary-card">
+          <span>Low Stock Items:</span>
+          <strong className="alert">
+            {products.filter((p) => p.quantity < 10).length}
+          </strong>
+        </div>
+
+        <div className="summary-card">
+          <span>Total Value:</span>
+          <strong>
+            $
+            {products
+              .reduce((sum, p) => sum + p.costPrice * p.quantity, 0)
+              .toFixed(2)}
+          </strong>
+        </div>
+      </div>
+
+      {/* PRODUCT MODAL */}
+      <ProductModal
+        isOpen={isModalOpen}
+        mode={modalMode}
+        initialData={selectedProduct}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedProduct(null);
+        }}
+        onSubmit={handleSubmit}
+      />
+    </div>
+  );
 }

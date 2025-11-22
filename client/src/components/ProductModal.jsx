@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import "../ProductModal.css"; // Import product modal's style
+import "../ProductModal.css";
 
 export default function ProductModal({
-    isOpen,          // controls whether the modal should be visible
-    mode = "create", // if modal is used to "create" or "edit"
-    initialData,     // existing product data when editing
-    onClose,         // function to close the modal
-    onSubmit         // function that receives submitted form data
+    isOpen,
+    mode = "create",
+    initialData,
+    onClose,
+    onSubmit
 }) {
 
     // Local state for all modal input fields
@@ -14,29 +14,30 @@ export default function ProductModal({
         name: "",
         sku: "",
         category: "",
-        quantity: "",
-        price: ""
+        quantity: 0,
+        costPrice: 0,
+        salePrice: 0
     });
 
-    // Loads existing product data when editing OR resets fields when creating
+    // Load existing product data when editing OR resets fields when creating
     useEffect(() => {
         if (mode === "edit" && initialData) {
-            // When editing, fill the form with the product's current values
             setFormData({
                 name: initialData.name || "",
                 sku: initialData.sku || "",
                 category: initialData.category || "",
-                quantity: initialData.quantity || "",
-                price: initialData.price || ""
+                quantity: initialData.quantity || 0,
+                costPrice: initialData.costPrice || 0,
+                salePrice: initialData.salePrice || 0
             });
         } else {
-            // When creating a new product, reset all fields
             setFormData({
                 name: "",
                 sku: "",
                 category: "",
-                quantity: "",
-                price: ""
+                quantity: 0,
+                costPrice: 0,
+                salePrice: 0
             });
         }
     }, [mode, initialData, isOpen]);
@@ -46,24 +47,22 @@ export default function ProductModal({
 
     // Updates local formData when user types in any field
     const handleChange = (e) => {
-        const { name, value } = e.target; // Get input's name (which field it is) and the value the user typed
+        const { name, value } = e.target;
 
         // Update only the one form field the user is typing in
-        setFormData(previousValues => ({
-
-            // Keep all the existing form fields the same
-            ...previousValues,
-
-            // Change the specific field the user edited (example: name, sku, price)
-            [name]: value
+        setFormData((prev) => ({
+            ...prev,
+            [name]: ["quantity", "costPrice", "salePrice"].includes(name)
+                ? Number(value)
+                : value
         }));
     };
 
-    // Handles the submit action inside the modal
+    // Handle the submit action inside the modal
     const handleSubmit = (e) => {
-        e.preventDefault();       // Prevent page reload
-        onSubmit(formData);       // Send data back up to Inventory.jsx
-        onClose();                // Close modal after submission
+        e.preventDefault();
+        onSubmit(formData);
+        onClose();
     };
 
     return (
@@ -71,74 +70,60 @@ export default function ProductModal({
         <div className="product-modal-overlay" onClick={onClose}>
 
             {/* Center modal box */}
-            
             <div
                 className="product-modal-box"
-                onClick={(e) => e.stopPropagation()}    /* stopPropagation stops the click from closing the modal */
+                onClick={(e) => e.stopPropagation()} /* stopPropagation stops the click from closing the modal */
             >
-
                 {/* Header section of the modal */}
                 <div className="product-modal-header">
-
-                    {/* Show the correct title depending on mode */}
-                    <h2>
-                        {mode === "edit" ? "Update Product" : "Add Product"}
-                    </h2>
-
-                    {/* Button to close the modal */}
-                    <button className="product-modal-close-btn" onClick={onClose}>×</button>
+                    <h2>{mode === "edit" ? "Update Product" : "Add Product"}</h2> 
+                    <button className="product-modal-close-btn" onClick={onClose}>
+                        ×
+                    </button>
                 </div>
 
                 {/* Form with all product fields */}
                 <form className="product-modal-form" onSubmit={handleSubmit}>
-
-                    {/* Product Name */}
                     <label>Product Name</label>
-                    <input
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                    />
+                    <input name="name" value={formData.name} onChange={handleChange} required />
 
-                    {/* SKU */}
                     <label>SKU</label>
-                    <input
-                        name="sku"
-                        value={formData.sku}
-                        onChange={handleChange}
-                    />
+                    <input name="sku" value={formData.sku} onChange={handleChange} required />
 
-                    {/* Category */}
                     <label>Category</label>
-                    <input
-                        name="category"
-                        value={formData.category}
-                        onChange={handleChange}
-                    />
+                    <input name="category" value={formData.category} onChange={handleChange} required />
 
-                    {/* Quantity */}
                     <label>Quantity</label>
                     <input
                         name="quantity"
                         type="number"
                         value={formData.quantity}
                         onChange={handleChange}
+                        required
                     />
 
-                    {/* Price */}
-                    <label>Price</label>
+                    <label>Cost Price ($)</label>
                     <input
-                        name="price"
+                        name="costPrice"
                         type="number"
-                        value={formData.price}
+                        step="0.01"
+                        value={formData.costPrice}
                         onChange={handleChange}
+                        required
+                    />
+
+                    <label>Sale Price ($)</label>
+                    <input
+                        name="salePrice"
+                        type="number"
+                        step="0.01"
+                        value={formData.salePrice}
+                        onChange={handleChange}
+                        required
                     />
 
                     {/* Bottom buttons */}
                     <div className="product-modal-actions">
-
-                        {/* Cancel button */}
                         <button
                             type="button"
                             className="product-modal-secondary-btn"
@@ -147,11 +132,7 @@ export default function ProductModal({
                             Cancel
                         </button>
 
-                        {/* Submit button */}
-                        <button
-                            type="submit"
-                            className="product-modal-primary-btn"
-                        >
+                        <button type="submit" className="product-modal-primary-btn">
                             {mode === "edit" ? "Save Changes" : "Add Product"}
                         </button>
                     </div>
