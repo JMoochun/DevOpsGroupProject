@@ -26,17 +26,23 @@ const ForgotPassword = () => {
     setError('');
     setSuccess('');
 
-    // Basic validation (Justine will enhance)
-    if (!email) {
-      setError('Please enter your email address');
-      return;
-    }
+      // Basic validation (Justine will enhance)
+      const validateEmail = (value) => {
+          if (!value.trim()) return "Please enter your email address";
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError('Please enter a valid email address');
-      return;
-    }
+          const trimmed = value.trim();
+          const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+          if (!emailRegex.test(trimmed)) return "Please enter a valid email address";
+
+          return "";
+      };
+
+      const errorMsg = validateEmail(email);
+      if (errorMsg) {
+          setError(errorMsg);
+          return;
+      }
 
     setLoading(true);
 
