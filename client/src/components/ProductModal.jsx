@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../ProductModal.css";
+import "../Inventory.css";
 
 export default function ProductModal({
     isOpen,
@@ -132,8 +133,8 @@ export default function ProductModal({
                             Cancel
                         </button>
 
-                        <button type="submit" className="product-modal-primary-btn">
-                            {mode === "edit" ? "Save Changes" : "Add Product"}
+                        <button type="submit" className="btn-add-product">
+                            {mode === "edit" ? "Save Changes" : "+ Add Product"}
                         </button>
                     </div>
                 </form>

@@ -61,7 +61,7 @@
 }
 
 .search-box input {
-  width: 100%;
+  width: 93%;
   padding: 12px 40px 12px 15px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
@@ -75,16 +75,38 @@
 
 .search-icon {
   position: absolute;
-  right: 15px;
+  right: 17px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 18px;
 }
 
+.filter-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
 .filter-box {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  height: 45px;
+  padding: 10px 50px 10px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #fff;
+  cursor: pointer;
+  appearance: none;
+}
+
+.filter-wrapper::after {
+  content: "expand_more";
+  font-family: "Material Icons Round";
+  font-size: 30px;
+  color: #667EEA;
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .filter-box label {
@@ -93,11 +115,15 @@
 }
 
 .filter-box select {
-  padding: 10px 15px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 15px;
   cursor: pointer;
+}
+
+.filter-box:focus {
+  outline: none; 
+  border-color: #667eea; 
 }
 
 .btn-add-product {
@@ -212,9 +238,9 @@
 }
 
 /* Action Buttons */
-.actions-cell, .actions-buttons {
+.actions-cell, .action-buttons {
   display: flex;
-  gap: 8px;
+  gap: 15px;
 }
 
 .btn-edit,

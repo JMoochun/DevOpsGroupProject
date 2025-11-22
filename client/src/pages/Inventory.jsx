@@ -194,15 +194,17 @@ export default function Inventory() {
         </div>
 
         {/* Category Filter */}
-        <select
-          className="filter-select"
-          value={filterCategory}
-          onChange={(e) => setFilterCategory(e.target.value)}
-        >
-          {categories.map((cat) => (
-            <option key={cat}>{cat}</option>
-          ))}
-        </select>
+        <div className="filter-wrapper">
+            <select
+                className="filter-box"
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+            >
+                {categories.map((cat) => (
+                <option key={cat}>{cat}</option>
+                ))}
+            </select>
+        </div>
 
         {/* Add Product */}
         {isManager && (
