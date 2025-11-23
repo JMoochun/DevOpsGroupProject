@@ -78,7 +78,7 @@ const Register = () => {
       } else {
           const passwordErrors = [];
 
-          if (password.lenth < 6) {
+          if (password.length < 6) {
               passwordErrors.push("* Must be at least 6 characters");
           }
           if (!/[A-Z]/.test(password)) {
