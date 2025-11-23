@@ -11,6 +11,8 @@ import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import crypto from "crypto";
 import { sendResetPasswordEmail } from "../utils/email.js";
+import jwt from "jsonwebtoken";
+
 
 
 const router = express.Router(); 
@@ -51,9 +53,24 @@ router.post('/login', async (req, res) => {
         return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    res.json({ message: "Login successful" });
-});
+    const token = jwt.sign(
+        { id: user._id, role: user.role, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "7d" }
+    );
 
+    res.json({
+        message: "Login successful",
+        token,
+        user: {
+            id: user._id,
+            email: user.email,
+            role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName
+        }
+    });
+});
 
 
 router.post('/forgot-password', async (req, res) => {
