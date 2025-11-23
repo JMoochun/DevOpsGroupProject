@@ -7,7 +7,11 @@ const userSchema = new mongoose.Schema({
     passwordHash: { type: String, required: true },
 
     //Distinguish between employee vs manager
-    role: { type: String, enum: ["admin", "manager", "employee"], default: "employee" }
+    role: { type: String, enum: ["admin", "manager", "employee"], default: "employee" },
+   
+    //required for reset-password
+    resetPasswordToken: { type: String},
+    resetPasswordExpires: { type: Date}
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);
