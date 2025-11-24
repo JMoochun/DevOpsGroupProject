@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema({
 
     //Product $$ schema section
     //What we pay
-    cost: { type: Number, required: true, min: 0 },
+    costPrice: { type: Number, required: true, min: 0 },
     //What we sell the product for
     salePrice: { type: Number, required: true, min: 0 },
     //revenue
