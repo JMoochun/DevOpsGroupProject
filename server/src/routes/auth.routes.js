@@ -1,11 +1,3 @@
-//import { sendResetPasswordEmail } from "../utils/email.js"; // email helper (Aiko's task)
-
-/**
- Add into password reset route
- // Send email to user
-await sendResetPasswordEmail(user.email, resetToken);
- */
-
 import express from "express";
 import bcrypt from "bcrypt";
 import User from "../models/User.js";
@@ -76,8 +68,16 @@ router.post('/login', async (req, res) => {
 router.post('/forgot-password', async (req, res) => {
     const {email} = req.body; 
     try{
-       // check for existing user and redirect link (needs to be added)
-      
+       //Find user by email
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            // If user not found, redirect to register
+            return res.status(404).json({ 
+                message: "No account found with that email.",
+                redirectTo: "/register"
+            });
+        }
 
        // generates a raw token 
         const rawToken = crypto.randomBytes(32).toString("hex");
