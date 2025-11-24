@@ -2,12 +2,20 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI);
-        console.log("MongoDB Connected Successfully");
+        const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
+        console.log("Mongo URI from env:", uri);
+
+        if (!uri) {
+            throw new Error("No Mongo URI set in env (MONGO_URI / MONGODB_URI)");
+        }
+
+        await mongoose.connect(uri);
+        console.log("MongoDB connected");
     } catch (err) {
-        console.error("MongoDB Failed to Connect:", err.message);
-        process.exit(1);
+        console.error("MongoDB connection error:", err);
+        throw err; // so index.js sees the failure
     }
 };
 
 export default connectDB;
+
