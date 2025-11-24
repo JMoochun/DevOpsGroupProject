@@ -7,7 +7,7 @@ await sendResetPasswordEmail(user.email, resetToken);
  */
 
 import express from "express";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import User from "../models/User.js";
 import crypto from "crypto";
 import { sendResetPasswordEmail } from "../utils/email.js";

@@ -7,7 +7,9 @@ import passport from "./auth/passport.js";
 import productRoutes from "./routes/products.routes.js";
 import connectDB from "./db.js";
 
+
 const app = express();
+
 
 app.use(morgan("dev"));
 app.use(express.json());
