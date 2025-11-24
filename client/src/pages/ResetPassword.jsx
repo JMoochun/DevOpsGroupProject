@@ -89,7 +89,7 @@ const ResetPassword = () => {
       
       // Redirect to login after 2 seconds
       setTimeout(() => {
-        navigate('/login');
+        navigate('/');
       }, 2000);
     } catch (err) {
       if (err.response?.status === 400) {

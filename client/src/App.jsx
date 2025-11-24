@@ -8,11 +8,13 @@ import Notifications from "./pages/Notifications.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx"; 
 
 function App() {
     const location = useLocation();
+
     // routes that should NOT show the navbar
-    const authRoutes = ["/", "/register", "/forgot-password"];
+    const authRoutes = ["/", "/register", "/forgot-password", "/reset-password"];
     const hideNav = authRoutes.includes(location.pathname);
 
     return (
@@ -21,10 +23,11 @@ function App() {
             <div className={hideNav ? "auth-body" : "app-body"}>
                 <div className={hideNav ? "" : "app-content"}>
                     <Routes>
-                        {/* login functionality */}
+                        {/* Auth */}
                         <Route path="/" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
 
                         {/* Application */}
                         <Route path="/home" element={<Home />} />
@@ -39,3 +42,4 @@ function App() {
 }
 
 export default App;
+
