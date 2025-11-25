@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo

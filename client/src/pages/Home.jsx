@@ -1,173 +1,103 @@
-﻿import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
-import '../Auth.css';
+﻿import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import "./Home.css";
 
-/**
- * LOGIN COMPONENT
- * Purpose: Authenticate users and redirect to dashboard
- * User Story: IMS-01 - Employee can log into the application
- * 
- * Features:
- * - Email and password input fields
- * - Client-side validation (handled by Justine's task)
- * - Error message display
- * - Link to registration and forgot password
- */
+// Sample low stock data - replace with API call to David S's endpoint
+const LOW_STOCK_MOCK_DATA = [
+    { id: 1, name: "Wireless Mouse", sku: "WM-2025", quantity: 5, reorderLevel: 10 },
+    { id: 2, name: "USB-C Cable", sku: "USBC-001", quantity: 3, reorderLevel: 15 },
+    { id: 3, name: "Keyboard", sku: "KB-104", quantity: 8, reorderLevel: 12 },
+];
 
-const Login = () => {
-    const navigate = useNavigate();
+const Home = () => {
+    const { user } = useAuth();
+    const isManager = user?.role === "manager";
+    const [lowStockItems, setLowStockItems] = useState([]);
 
-    // State management for form inputs and feedback
-    const [formData, setFormData] = useState({
-        email: '',
-        password: ''
-    });
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [fieldErrors, setFieldErrors] = useState({});
+    useEffect(() => {
+       
+        setTimeout(() => {
+            setLowStockItems(LOW_STOCK_MOCK_DATA);
+        }, 500);
+    }, []);
 
-    // Justine: Validates the email and password fields
-    const validateFields = (data) => {
-        const errors = {};
-
-        if (!data.email.trim()) {
-            errors.email = "Email is required";
-        } else if (!/^\S+@\S+\.\S+$/.test(data.email)) {
-            errors.email = "Invalid email format";
-        }
-
-        if (!data.password.trim()) {
-            errors.password = "Password is required";
-        } else if (data.password.length < 6) {
-            errors.password = "Password must be at least 6 characters";
-        }
-        return errors;
-    };
-
-    // Handle input changes
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-
-        setFieldErrors({
-            ...fieldErrors,
-            [e.target.name]: ""
-        });
-
-        setError(''); // Clear error when user types
-    };
-
-    // Handle form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError('');
-        setFieldErrors({});
-
-        const errors = validateFields(formData);
-        if (Object.keys(errors).length > 0) {
-            setFieldErrors(errors);
-            setLoading(false);
-            return;
-        }
-
-        try {
-            // API call to backend (David S will create this endpoint)
-            const response = await axios.post('http://localhost:5000/api/auth/login', formData);
-
-            // Store JWT token (David S's task)
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
-
-            // Redirect to dashboard
-            navigate('/home');
-        } catch (err) {
-            // Display error from server (David C's error handling)
-            setError(err.response?.data?.message || 'Login failed. Please try again.');
-        } finally {
-            setLoading(false);
-        }
+    const metrics = {
+        totalProducts: 1247,
+        lowStockCount: lowStockItems.length,
+        totalValue: "$458,920"
     };
 
     return (
-        <div className="auth-container">
-            <div className="auth-card">
-                <div className="auth-header">
-                    <h1>Inventory Management System</h1>
-                    <h2>Login</h2>
+        <div className="dashboard-container">
+            <section className="metrics-grid">
+                <div className="metric-card primary">
+                    <h3>Total Products</h3>
+                    <p className="metric-value">{metrics.totalProducts}</p>
+                    <small className="metric-footer">Across all branches</small>
                 </div>
 
-                <form onSubmit={handleSubmit} className="auth-form" noValidate>
-                    {/* Error Message Display */}
-                    {error && (
-                        <div className="error-message">
-                            <span className="error-icon">⚠️</span>
-                            {error}
-                        </div>
-                    )}
+                <div className="metric-card warning">
+                    <h3>Low Stock Items</h3>
+                    <p className="metric-value">{metrics.lowStockCount}</p>
+                    <small className="metric-footer">Need immediate attention</small>
+                </div>
 
-                    {/* Email Input */}
-                    <div className="form-group">
-                        <label htmlFor="email">Email Address</label>
-                        <input
-                            type="text"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="Enter your email"
-                        />
-                        {fieldErrors.email && (
-                            <p className="field-error">{fieldErrors.email}</p>
-                        )}
+                {isManager && (
+                    <div className="metric-card success">
+                        <h3>Total Inventory Value</h3>
+                        <p className="metric-value">{metrics.totalValue}</p>
+                        <small className="metric-footer">Based on current stock</small>
                     </div>
+                )}
+            </section>
 
-                    {/* Password Input */}
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Enter your password"
-                        />
-                        {fieldErrors.password && (
-                            <p className="field-error">{fieldErrors.password}</p>
-                        )}
+            {lowStockItems.length > 0 && (
+                <section className="low-stock-section">
+                    <h2 className="section-title">🔴 Low Stock Products</h2>
+                    <div className="stock-table-container">
+                        <table className="stock-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>SKU</th>
+                                    <th>Current Qty</th>
+                                    <th>Reorder Level</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {lowStockItems.map(item => (
+                                    <tr key={item.id} className="low-stock-row">
+                                        <td>{item.name}</td>
+                                        <td><code>{item.sku}</code></td>
+                                        <td className="qty-low">{item.quantity}</td>
+                                        <td>{item.reorderLevel}</td>
+                                        <td>
+                                            <span className="status-badge critical">
+                                                Critical
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
+                </section>
+            )}
 
-                    {/* Forgot Password Link (Mutaz's task) */}
-                    <div className="form-links">
-                        <Link to="/forgot-password" className="link">
-                            Forgot Password?
-                        </Link>
-                    </div>
+            <section className="summary-panels">
+                <div className="info-box">
+                    <h2>Home screen Information for the user</h2>
+                    <p>Welcome to the Inventory Management System. Access reports, notifications, and inventory controls via the navigation above.</p>
+                </div>
 
-                    {/* Submit Button */}
-                    <button
-                        type="submit"
-                        className="btn-primary"
-                        disabled={loading}
-                    >
-                        {loading ? 'Logging in...' : 'Login'}
-                    </button>
-
-                    {/* Register Link (Jeremiah's task - see below) */}
-                    <div className="form-footer">
-                        <p>Don't have an account?</p>
-                        <Link to="/register" className="link-primary">
-                            Register Here
-                        </Link>
-                    </div>
-                </form>
-            </div>
+                <div className="info-box">
+                    <h2>IMS Information for the user</h2>
+                    <p>Real-time inventory data is displayed in the metrics section. Notifications will alert you to low stock items requiring attention.</p>
+                </div>
+            </section>
         </div>
     );
 };
 
-export default Login;
+export default Home;
