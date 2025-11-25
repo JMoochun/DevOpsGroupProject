@@ -1,58 +1,56 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+﻿import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import './NavBar.css';
 
 export default function NavBar() {
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
+
     return (
-        <nav className="top-nav">
-            <div className="nav-left">
-                <span className="brand">Inventory Management System</span>
-                <NavLink
-                    to="/home"
-                    end
-                    className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}
-                >
-                    Home
-                </NavLink>
-                <NavLink
-                    to="/inventory"
-                    className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}
-                >
-                    Inventory
-                </NavLink>
-                <NavLink
-                    to="/reports"
-                    className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}
-                >
-                    Reports
-                </NavLink>
-                <NavLink
-                    to="/notifications"
-                    className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}
-                >
-                    Notifications
-                </NavLink>
-            </div>
-            <div className="nav-right">
-                <span className="user-pill">User Details</span>
-            </div>
-        </nav>
+        <>
+            <header className="main-header">
+                <div className="user-info">
+                    <span className="welcome-text">Welcome: {user?.name || 'Example User'}</span>
+                    <span className="branch-text">Branch: {user?.branch || 'Location'}</span>
+                </div>
+
+                <h1 className="system-title">Inventory Management System</h1>
+
+                {/* USER PROFILE PLACEHOLDER - For future dropdown menu */}
+                <div className="user-profile-section">
+                    <div className="profile-dropdown">
+                        <span className="profile-avatar">{user?.name?.[0] || 'U'}</span>
+                        <span className="profile-name">{user?.name || 'User'}</span>
+                        <span className="profile-arrow">▼</span>
+                    </div>
+                    {/* Future dropdown menu will be inserted here */}
+                </div>
+            </header>
+
+            <nav className="top-navigation">
+                <div className="nav-links">
+                    <NavLink to="/home" end className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>
+                        Home
+                    </NavLink>
+                    <NavLink to="/reports" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>
+                        Reports
+                    </NavLink>
+                    <NavLink to="/notifications" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>
+                        Notifications ({user?.unreadCount || 0})
+                    </NavLink>
+                    {user?.role === 'manager' && (
+                        <NavLink to="/inventory" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>
+                            IMS
+                        </NavLink>
+                    )}
+                </div>
+                <button onClick={handleLogout} className="logout-btn">Logout</button>
+            </nav>
+        </>
     );
 }
-
-const styles = {
-    nav: {
-        display: "flex",
-        alignItems: "center",
-        gap: "1rem",
-        padding: "0.75rem 1rem",
-        background: "#fff",
-        borderBottom: "1px solid #eee",
-    },
-    brand: {
-        fontWeight: 700,
-    },
-    links: {
-        display: "flex",
-        gap: "1rem",
-    },
-};
