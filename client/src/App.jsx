@@ -10,13 +10,13 @@ import Notifications from "./pages/Notifications.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx"; 
 
 function App() {
     const location = useLocation();
-    const { user } = useAuth();
 
-    // Routes that should NOT show navbar
-    const authRoutes = ["/", "/register", "/forgot-password"];
+    // routes that should NOT show the navbar
+    const authRoutes = ["/", "/register", "/forgot-password", "/reset-password"];
     const hideNav = authRoutes.includes(location.pathname);
 
     return (
@@ -25,10 +25,11 @@ function App() {
             <div className={hideNav ? "auth-body" : "app-body"}>
                 <div className={hideNav ? "" : "app-content"}>
                     <Routes>
-                        {/* Public Routes */}
+                        {/* Auth */}
                         <Route path="/" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
 
                         
                         <Route
@@ -73,11 +74,5 @@ function App() {
     );
 }
 
-// Export wrapped component for main.jsx
-export default function AppWrapper() {
-    return (
-        <AuthProvider>
-            <App />
-        </AuthProvider>
-    );
-}
+export default App;
+
