@@ -2,29 +2,37 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import authRoutes from "./routes/auth.routes.js";
 import passport from "./auth/passport.js";
+import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/products.routes.js";
 import connectDB from "./db.js";
 
-
 const app = express();
 
-
+// Logging
 app.use(morgan("dev"));
+
+// Parse JSON
 app.use(express.json());
-app.use(cors({ origin: process.env.CLIENT_ORIGIN }));
+
+// CORS - only once, matching frontend
+app.use(cors({
+  origin: "http://localhost:5176",
+  credentials: true,
+}));
+
+// Passport middleware
 app.use(passport.initialize());
-app.use("/api/auth", authRoutes)
+
+// Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 
-//Route for testing **Can remove later
+// Test route
 app.get("/", (req, res) => res.send("API Running"));
 
-
-
+// Start server after DB connection
 const PORT = process.env.PORT || 5000;
-
 connectDB().then(() => {
-    app.listen(PORT, () => console.log("Server running on port:", PORT));
+  app.listen(PORT, () => console.log("Server running on port:", PORT));
 });

@@ -14,8 +14,8 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 
 function App() {
     const location = useLocation();
+    const { user } = useAuth(); 
 
-    // routes that should NOT show the navbar
     const authRoutes = ["/", "/register", "/forgot-password", "/reset-password"];
     const hideNav = authRoutes.includes(location.pathname);
 
@@ -25,13 +25,13 @@ function App() {
             <div className={hideNav ? "auth-body" : "app-body"}>
                 <div className={hideNav ? "" : "app-content"}>
                     <Routes>
-                        {/* Auth */}
+                        {/* Public Routes */}
                         <Route path="/" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
                         <Route path="/reset-password" element={<ResetPassword />} />
 
-                        
+                        {/* Protected Routes */}
                         <Route
                             path="/home"
                             element={
@@ -65,7 +65,6 @@ function App() {
                             }
                         />
 
-                        {/* Redirect unknown routes */}
                         <Route path="*" element={<Navigate to={user ? "/home" : "/"} replace />} />
                     </Routes>
                 </div>
@@ -74,5 +73,10 @@ function App() {
     );
 }
 
-export default App;
-
+export default function AppWrapper() {
+    return (
+        <AuthProvider>
+            <App />
+        </AuthProvider>
+    );
+}
