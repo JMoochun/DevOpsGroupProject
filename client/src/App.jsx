@@ -9,8 +9,6 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx"; 
-
-import ResetPassword from "./pages/ResetPassword.jsx"; 
 import SupportContact from './pages/SupportContact'; // Import the new component
 
 
