@@ -16,6 +16,14 @@ export default function Home() {
                     <p className="muted">example text.</p>
                 </div>
             </div>
+        {/* Add the link to Support Contact in the footer */}
+            <div style={{ textAlign: 'center', marginTop: '50px' }}>
+                <Link to="/support" className="nav-link" style={{ color: '#667eea', textDecoration: 'none', fontSize: '0.9rem' }}>
+                    Support Contact
+                </Link>
+            </div>
+        
         </div>
+
     );
 }

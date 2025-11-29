@@ -9,6 +9,11 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 
+import ResetPassword from "./pages/ResetPassword.jsx"; 
+import SupportContact from './pages/SupportContact'; // Import the new component
+
+
+
 function App() {
     const location = useLocation();
     // routes that should NOT show the navbar
@@ -31,6 +36,7 @@ function App() {
                         <Route path="/inventory" element={<Inventory />} />
                         <Route path="/reports" element={<Reports />} />
                         <Route path="/notifications" element={<Notifications />} />
+                          <Route path="/support" element={<SupportContact />} />
                     </Routes>
                 </div>
             </div>
