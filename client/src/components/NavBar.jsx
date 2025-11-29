@@ -1,10 +1,19 @@
 ﻿import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useState } from "react";
+import ProfileModal from "../components/ProfileModal.jsx"; 
 import './NavBar.css';
 
 export default function NavBar() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+
+    // Controls showing/hiding the profile modal
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+    // First name from AuthContext user
+    const firstName = user?.firstName || "User";
+    const avatarLetter = firstName[0].toUpperCase() || "U";
 
     const handleLogout = () => {
         logout();
@@ -15,20 +24,21 @@ export default function NavBar() {
         <>
             <header className="main-header">
                 <div className="user-info">
-                    <span className="welcome-text">Welcome: {user?.name || 'Example User'}</span>
+                    <span className="welcome-text">Welcome: {firstName || 'Example User'}</span>
                     <span className="branch-text">Branch: {user?.branch || 'Location'}</span>
                 </div>
 
                 <h1 className="system-title">Inventory Management System</h1>
 
-                {/* USER PROFILE PLACEHOLDER - For future dropdown menu */}
+                {/* USER PROFILE SECTION */}
                 <div className="user-profile-section">
-                    <div className="profile-dropdown">
-                        <span className="profile-avatar">{user?.name?.[0] || 'U'}</span>
-                        <span className="profile-name">{user?.name || 'User'}</span>
-                        <span className="profile-arrow">▼</span>
+                    <div
+                        className="profile-button"
+                        onClick={() => setIsProfileOpen(true)}   // open the profile modal
+                    >
+                        <span className="profile-avatar">{avatarLetter}</span>
+                        <span className="profile-name">{firstName}</span>
                     </div>
-                    {/* Future dropdown menu will be inserted here */}
                 </div>
             </header>
 
@@ -51,6 +61,9 @@ export default function NavBar() {
                 </div>
                 <button onClick={handleLogout} className="logout-btn">Logout</button>
             </nav>
+            
+            {/* Profile Modal*/}
+            <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)}/>
         </>
     );
 }

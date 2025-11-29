@@ -37,12 +37,12 @@
     font-weight: 700;
 }
 
-/* USER PROFILE PLACEHOLDER */
+/* USER PROFILE BUTTON */
 .user-profile-section {
     position: relative;
 }
 
-.profile-dropdown {
+.profile-button {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -52,7 +52,7 @@
     transition: background 0.3s;
 }
 
-    .profile-dropdown:hover {
+    .profile-button:hover {
         background: rgba(255,255,255,0.1);
     }
 

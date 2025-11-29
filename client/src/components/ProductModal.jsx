@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../ProductModal.css";
+import "../components/ProductModal.css";
 import "../Inventory.css";
 
 export default function ProductModal({
