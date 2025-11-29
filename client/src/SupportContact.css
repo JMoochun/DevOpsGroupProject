@@ -1,0 +1,239 @@
+/* 
+ * SUPPORT CONTACT STYLES
+ */
+
+.support-contact-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.support-contact-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  padding: 40px;
+  box-sizing: border-box; /* Ensures padding doesn't increase total width */
+}
+
+.support-contact-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.support-contact-header .subtitle {
+  color: #666; /* A slightly softer color */
+  font-size: 16px;
+  margin-top: 10px; /* Some space from the title */
+}
+
+.support-contact-header h1 {
+  color: #667eea;
+  font-size: 30px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.support-contact-header h2 {
+  color: #333;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Read-only details styling */
+.support-contact-details {
+  margin-bottom: 20px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+  color: #333;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-item strong {
+  color: #667eea;
+  min-width: 120px; /* Align labels */
+}
+
+/* Form styling (similar to auth-form) */
+.support-contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* Buttons */
+.form-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end; /* Align buttons to the right */
+  margin-top: 20px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex: 1; /* Make buttons take equal space */
+  max-width: 150px; /* Limit button width */
+}
+
+.btn-secondary {
+  background-color: #e0e0e0;
+  color: #333;
+  padding: 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex: 1;
+  max-width: 150px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:disabled,
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error Message Styling (similar to Auth.css) */
+.error-message {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.error-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Success Message Styling (similar to Auth.css) */
+.success-message {
+  background-color: #e6ffe6; /* Light green */
+  border: 1px solid #a3e9a4; /* Green border */
+  color: #2e7d32; /* Darker green text */
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+}
+
+/* Field-specific error styling */
+.input-error {
+  border-color: #f44336 !important; /* Red border for invalid input */
+}
+
+.field-error {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Footer Link */
+.form-footer {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.link-primary {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.link-primary:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .support-contact-card {
+    padding: 30px 20px;
+  }
+  
+  .support-contact-header h1 {
+    font-size: 20px;
+  }
+  
+  .support-contact-header h2 {
+    font-size: 24px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-primary, .btn-secondary {
+    max-width: 100%;
+  }
+}
