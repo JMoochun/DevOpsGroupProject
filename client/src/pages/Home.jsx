@@ -1,8 +1,8 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 import "./Home.css";
 
-// Sample low stock data - replace with API call to David S's endpoint
 const LOW_STOCK_MOCK_DATA = [
     { id: 1, name: "Wireless Mouse", sku: "WM-2025", quantity: 5, reorderLevel: 10 },
     { id: 2, name: "USB-C Cable", sku: "USBC-001", quantity: 3, reorderLevel: 15 },
@@ -15,7 +15,6 @@ const Home = () => {
     const [lowStockItems, setLowStockItems] = useState([]);
 
     useEffect(() => {
-       
         setTimeout(() => {
             setLowStockItems(LOW_STOCK_MOCK_DATA);
         }, 500);
@@ -96,6 +95,12 @@ const Home = () => {
                     <p>Real-time inventory data is displayed in the metrics section. Notifications will alert you to low stock items requiring attention.</p>
                 </div>
             </section>
+
+            <div style={{ textAlign: "center", marginTop: "50px" }}>
+                <Link to="/support" className="nav-link" style={{ color: "#667eea", textDecoration: "none", fontSize: "0.9rem" }}>
+                    Support Contact
+                </Link>
+            </div>
         </div>
     );
 };

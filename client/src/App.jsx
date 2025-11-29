@@ -10,11 +10,12 @@ import Notifications from "./pages/Notifications.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
-import ResetPassword from "./pages/ResetPassword.jsx"; 
+import ResetPassword from "./pages/ResetPassword.jsx";
+import SupportContact from "./pages/SupportContact";
 
 function App() {
     const location = useLocation();
-    const { user } = useAuth(); 
+    const { user } = useAuth();
 
     const authRoutes = ["/", "/register", "/forgot-password", "/reset-password"];
     const hideNav = authRoutes.includes(location.pathname);
@@ -25,13 +26,11 @@ function App() {
             <div className={hideNav ? "auth-body" : "app-body"}>
                 <div className={hideNav ? "" : "app-content"}>
                     <Routes>
-                        {/* Public Routes */}
                         <Route path="/" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
                         <Route path="/reset-password" element={<ResetPassword />} />
 
-                        {/* Protected Routes */}
                         <Route
                             path="/home"
                             element={
@@ -61,6 +60,15 @@ function App() {
                             element={
                                 <ProtectedRoute>
                                     <Notifications />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/support"
+                            element={
+                                <ProtectedRoute>
+                                    <SupportContact />
                                 </ProtectedRoute>
                             }
                         />
