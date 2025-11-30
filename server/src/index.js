@@ -5,6 +5,7 @@ import morgan from "morgan";
 import passport from "./auth/passport.js";
 import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/products.routes.js";
+import userRoutes from "./routes/user.routes.js";
 import connectDB from "./db.js";
 
 const app = express();
@@ -15,9 +16,11 @@ app.use(morgan("dev"));
 // Parse JSON
 app.use(express.json());
 
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
+
 // CORS - only once, matching frontend
 app.use(cors({
-  origin: "http://localhost:5176",
+  origin: CLIENT_ORIGIN,
   credentials: true,
 }));
 
@@ -27,6 +30,7 @@ app.use(passport.initialize());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
 
 // Test route
 app.get("/", (req, res) => res.send("API Running"));
