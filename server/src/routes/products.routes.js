@@ -1,6 +1,8 @@
 import express from "express";
 import Product from "../models/Product.js";
+import Notification from "../models/Notification.js";
 import requireAuth from "../middleware/requireAuth.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
@@ -59,6 +61,32 @@ router.put("/:id", requireAuth, async (req, res) => {
         if (!updatedProduct)
             return res.status(404).json({ message: "Product not found" });
 
+        const employees = await User.find({ role: "employee"});
+
+        // Stock update notification (all employees)
+        for(const employee of employees){
+            await Notification.create({
+                userId: employee._id,
+                type: "STOCK_UPDATE",
+                title: `STOCK UPDATED: ${updatedProduct.name}`,
+                message: `${updatedProduct.name}'s Updated Quantity: ${updatedProduct.quantity}`,
+                productId: updatedProduct._id  
+            });
+        }
+
+         const managers = await User.find({ role: "manager"});
+
+        // Low stock alert 
+        if(updatedProduct.quantity <= updatedProduct.lowStockThreshold){
+           for(const manager of managers)
+            await Notification.create({
+                userId: manager._id,
+                type: "LOW_STOCK",
+                title: `LOW STOCK: ${updatedProduct.name}`,
+                message: `${updatedProduct.name}'s Quantity: ${updatedProduct.quantity}`,
+                productId: updatedProduct._id
+            })
+        } 
         res.json(updatedProduct);
     } catch (err) {
         res.status(400).json({ message: err.message });
