@@ -139,9 +139,10 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 
-# Visual Studio / VS Code
+# Visual Studio / VS Code / JetBrains
 .vs/
 .vscode/
+.idea/
 
 # Node-related
 node_modules/
