@@ -12,6 +12,8 @@ import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import SupportContact from "./pages/SupportContact";
+import { NotificationProvider } from "./context/NotificationContext";
+
 
 function App() {
     const location = useLocation();
@@ -84,7 +86,9 @@ function App() {
 export default function AppWrapper() {
     return (
         <AuthProvider>
-            <App />
+            <NotificationProvider>
+                <App />
+            </NotificationProvider>
         </AuthProvider>
     );
 }
