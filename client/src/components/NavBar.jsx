@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { useState } from "react";
 import ProfileModal from "../components/ProfileModal.jsx"; 
 import './NavBar.css';
+import NotificationBadge from "../components/NotificationBadge.jsx";
+
 
 export default function NavBar() {
     const { user, logout } = useAuth();
@@ -50,8 +52,14 @@ export default function NavBar() {
                     <NavLink to="/reports" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>
                         Reports
                     </NavLink>
-                    <NavLink to="/notifications" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>
-                        Notifications ({user?.unreadCount || 0})
+                    <NavLink
+                        to="/notifications"
+                        className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}
+                    >
+                        <span className="nav-link-with-badge">
+                            <span>Notifications</span>
+                            <NotificationBadge />
+                        </span>
                     </NavLink>
                     {user?.role === 'manager' && (
                         <NavLink to="/inventory" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>
