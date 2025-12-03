@@ -5,6 +5,7 @@ import morgan from "morgan";
 import passport from "./auth/passport.js";
 import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/products.routes.js";
+import notifRoutes from "./routes/notifications.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import connectDB from "./db.js";
 
@@ -30,6 +31,7 @@ app.use(passport.initialize());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/notifications", notifRoutes);
 app.use("/api/users", userRoutes);
 
 // Test route

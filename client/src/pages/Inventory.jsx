@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import ProductModal from "../components/ProductModal";
 import "../Inventory.css";
+import { useNotifications } from "../context/NotificationContext";
 
 export default function Inventory() {
+
+  const { refreshNotifications } = useNotifications(); 
   // =============================
   // STATE
   // =============================
@@ -124,6 +127,7 @@ export default function Inventory() {
         await axios.post("http://localhost:5000/api/products", formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        await refreshNotifications();
       }
 
       // EDIT PRODUCT
@@ -135,6 +139,7 @@ export default function Inventory() {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+        await refreshNotifications();
       }
 
       setIsModalOpen(false);

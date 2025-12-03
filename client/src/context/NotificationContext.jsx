@@ -1,72 +1,78 @@
-﻿import React, { createContext, useContext, useState, useMemo } from "react";
+﻿import React, { createContext, useContext, useState, useMemo, useEffect } from "react";
+import axios from "axios";
+import { useAuth } from "./AuthContext";
 
 const NotificationContext = createContext(null);
 
-const initialNotifications = [
-    {
-        id: "1",
-        type: "LOW_STOCK",
-        title: "Low stock: Widget A",
-        message: "Only 5 units remaining in Main Branch.",
-        createdAt: new Date().toISOString(),
-        read: false,
-    },
-    {
-        id: "2",
-        type: "PRODUCT_UPDATE",
-        title: "Product updated: Widget B",
-        message: "Price updated from $10 to $11.",
-        createdAt: new Date().toISOString(),
-        read: false,
-    },
-    {
-        id: "3",
-        type: "LOW_STOCK",
-        title: "Low stock: Widget C",
-        message: "Only 2 units remaining.",
-        createdAt: new Date().toISOString(),
-        read: true,
-    },
-];
-
 export function NotificationProvider({ children }) {
-    const [notifications, setNotifications] = useState(initialNotifications);
+    const { user } = useAuth();
+    const [notifications, setNotifications] = useState([]);
 
-    const addFakeNotification = (type = "LOW_STOCK") => {
-        const id = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString();
-        const title =
-            type === "LOW_STOCK"
-                ? "Low stock: Example product"
-                : "Product updated: Example product";
+    useEffect(() => {
+        if(!user) return; 
+        refreshNotifications();
+    }, [user]);
 
-        setNotifications((prev) => [
-            {
-                id,
-                type,
-                title,
-                message:
-                    type === "LOW_STOCK"
-                        ? "Simulated low stock alert for testing."
-                        : "Simulated product update notification for testing.",
-                createdAt: new Date().toISOString(),
-                read: false,
-            },
-            ...prev,
-        ]);
+    const refreshNotifications = async () => {
+        try{
+            const token = localStorage.getItem("token");
+            const res = await axios.get("http://localhost:5000/api/notifications", 
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            setNotifications(res.data);
+            } catch (err) {
+                console.error("Failed to refresh notifications", err);
+            }
     };
 
-    const markAsRead = (id) => {
-        setNotifications((prev) =>
-            prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-        );
+    const markAsRead = async (id) => {
+        try{
+            const token = localStorage.getItem("token");
+
+            await axios.patch(`http://localhost:5000/api/notifications/${id}/read`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            setNotifications((prev) =>
+                prev.map((n) => (n._id === id ? { ...n, read: true } : n))
+            );
+        }catch(err){
+            console.error("Error marking as read.", err);
+        }
     };
 
-    const deleteNotification = (id) => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
+    const deleteNotification = async (id) => {
+         try{
+            const token = localStorage.getItem("token");
+
+            await axios.delete(`http://localhost:5000/api/notifications/${id}`,
+                {
+                    headers: {Authorization: `Bearer ${token}`},
+                }
+            );
+            setNotifications((prev) => prev.filter((n) => n._id !== id));
+         }catch(err){
+            console.error("Error deleting notifications:", err);
+         }
     };
 
-    const deleteMany = (ids) => {
-        setNotifications((prev) => prev.filter((n) => !ids.includes(n.id)));
+    const deleteMany = async (ids) => { 
+        try{
+            const token = localStorage.getItem("token");
+
+            await axios.post(`http://localhost:5000/api/notifications/bulk-delete`, {ids},
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            setNotifications((prev) => prev.filter((n) => !ids.includes(n._id)));
+        }catch(err){
+            console.error("Error deleting many: ", err);
+        }
     };
 
     const unreadCount = useMemo(
@@ -77,10 +83,10 @@ export function NotificationProvider({ children }) {
     const value = {
         notifications,
         unreadCount,
-        addFakeNotification,
         markAsRead,
         deleteNotification,
         deleteMany,
+        refreshNotifications
     };
 
     return (

@@ -5,13 +5,13 @@ import { useNotifications } from "../context/NotificationContext";
 import { useAuth } from "../context/AuthContext";
 
 export default function Notifications() {
-    const { notifications, addFakeNotification, markAsRead, deleteNotification, deleteMany } =
+    const { notifications, markAsRead, deleteNotification, deleteMany } =
         useNotifications();
     const { user } = useAuth();
 
     // Filter: default to the main thing each role cares about
     const [filter, setFilter] = useState(
-        user?.role === "manager" ? "LOW_STOCK" : "PRODUCT_UPDATE"
+        user?.role === "manager" ? "LOW_STOCK" : "STOCK_UPDATE"
     );
 
     const [selectedIds, setSelectedIds] = useState([]);
@@ -26,13 +26,13 @@ export default function Notifications() {
 
     const isAllSelected =
         filteredNotifications.length > 0 &&
-        filteredNotifications.every((n) => selectedIds.includes(n.id));
+        filteredNotifications.every((n) => selectedIds.includes(n._id));
 
     const toggleSelectAll = () => {
         if (isAllSelected) {
             setSelectedIds([]);
         } else {
-            setSelectedIds(filteredNotifications.map((n) => n.id));
+            setSelectedIds(filteredNotifications.map((n) => n._id));
         }
     };
 
@@ -44,23 +44,18 @@ export default function Notifications() {
 
     const handleBulkDelete = () => {
         if (selectedIds.length === 0) return;
-        deleteMany(selectedIds);
+        
+        if (selectedIds.length === 1) {
+            deleteNotification(selectedIds[0])
+        }else{
+            deleteMany(selectedIds);
+        }
         setSelectedIds([]);
     };
 
     const handleOpen = (id) => {
         // UI-only "open": mark as read and maybe later show a modal
         markAsRead(id);
-    };
-
-    const handleSimulateClick = () => {
-        // For IMS-07/08: "Trigger a product update / low stock event"
-        // Choose type based on filter or role
-        if (user?.role === "manager") {
-            addFakeNotification("LOW_STOCK");
-        } else {
-            addFakeNotification("PRODUCT_UPDATE");
-        }
     };
 
     const roleLabel =
@@ -72,17 +67,9 @@ export default function Notifications() {
                 <div>
                     <h1 className="page-title">Notifications</h1>
                     <p className="page-subtitle">
-                        {roleLabel} – open to mark as read, or delete individually / in bulk.
+                        {roleLabel} ï¿½ open to mark as read, or delete individually / in bulk.
                     </p>
                 </div>
-
-                <button
-                    className="btn primary-btn"
-                    type="button"
-                    onClick={handleSimulateClick}
-                >
-                    Simulate new notification
-                </button>
             </div>
 
             <div className="card">
@@ -111,9 +98,9 @@ export default function Notifications() {
                             type="button"
                             className={
                                 "chip" +
-                                (filter === "PRODUCT_UPDATE" ? " chip-active" : "")
+                                (filter === "STOCK_UPDATE" ? " chip-active" : "")
                             }
-                            onClick={() => setFilter("PRODUCT_UPDATE")}
+                            onClick={() => setFilter("STOCK_UPDATE")}
                         >
                             Product updates
                         </button>
@@ -152,21 +139,21 @@ export default function Notifications() {
                         <tbody>
                             {filteredNotifications.map((n) => (
                                 <tr
-                                    key={n.id}
+                                    key={n._id}
                                     className={n.read ? "row-read" : "row-unread"}
                                 >
                                     <td>
                                         <input
                                             type="checkbox"
-                                            checked={selectedIds.includes(n.id)}
-                                            onChange={() => toggleSelectOne(n.id)}
+                                            checked={selectedIds.includes(n._id)}
+                                            onChange={() => toggleSelectOne(n._id)}
                                         />
                                     </td>
                                     <td>
                                         <button
                                             type="button"
                                             className="link-button"
-                                            onClick={() => handleOpen(n.id)}
+                                            onClick={() => handleOpen(n._id)}
                                         >
                                             {n.title}
                                         </button>
@@ -190,9 +177,9 @@ export default function Notifications() {
                                         <button
                                             type="button"
                                             className="btn icon-btn"
-                                            onClick={() => deleteNotification(n.id)}
+                                            onClick={() => deleteNotification(n._id)}
                                         >
-                                            ??
+                                            x
                                         </button>
                                     </td>
                                 </tr>
