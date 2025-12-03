@@ -1,4 +1,3 @@
-// client/src/pages/Notifications.jsx
 import React, { useMemo, useState } from "react";
 import "./Notifications.css";
 import { useNotifications } from "../context/NotificationContext";
@@ -9,7 +8,6 @@ export default function Notifications() {
         useNotifications();
     const { user } = useAuth();
 
-    // Filter: default to the main thing each role cares about
     const [filter, setFilter] = useState(
         user?.role === "manager" ? "LOW_STOCK" : "STOCK_UPDATE"
     );
@@ -54,7 +52,6 @@ export default function Notifications() {
     };
 
     const handleOpen = (id) => {
-        // UI-only "open": mark as read and maybe later show a modal
         markAsRead(id);
     };
 

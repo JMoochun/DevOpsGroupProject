@@ -20,7 +20,6 @@
     flex-wrap: wrap;
 }
 
-/* Simple button styles that should match the rest of your app */
 .btn {
     border: none;
     border-radius: 4px;
@@ -50,7 +49,6 @@
     padding: 0.25rem 0.4rem;
 }
 
-/* Filter chips */
 .filters {
     display: flex;
     gap: 0.5rem;
@@ -72,7 +70,6 @@
     color: #ffffff;
 }
 
-/* Table */
 .notifications-table {
     width: 100%;
     border-collapse: collapse;
@@ -92,7 +89,6 @@
         background-color: #f8f9fa;
     }
 
-/* Row styling for read vs unread */
 .row-unread {
     background-color: #f6f4ff;
     font-weight: 500;
@@ -116,7 +112,6 @@
         text-decoration: underline;
     }
 
-/* Status pills */
 .status-pill {
     padding: 0.1rem 0.6rem;
     border-radius: 999px;
