@@ -45,7 +45,7 @@ export function validateRegisterInput({ firstName, lastName, email, password, ro
       pwdErrors.push("* Must contain at least 1 special character (!@#$%^&*)");
 
     if (pwdErrors.length > 0)
-      errors.password = pwdErrors.join("\n"); // same formatting as frontend
+      errors.password = pwdErrors.join("\n");
   }
 
   // Validate role
