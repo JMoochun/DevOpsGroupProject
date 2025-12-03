@@ -37,8 +37,11 @@ app.use("/api/users", userRoutes);
 // Test route
 app.get("/", (req, res) => res.send("API Running"));
 
+export default app;
+
 // Start server after DB connection
-const PORT = process.env.PORT || 5000;
-connectDB().then(() => {
-  app.listen(PORT, () => console.log("Server running on port:", PORT));
-});
+ connectDB().then(() => {
+    app.listen(PORT, () =>
+      console.log(`Server running on port: ${PORT}`)
+    );
+  });
