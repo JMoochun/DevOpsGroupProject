@@ -63,7 +63,7 @@ router.put("/:id", requireAuth, async (req, res) => {
 
         const employees = await User.find({ role: "employee"});
 
-        // Stock update notification (all employees)
+        // Stock update notification 
         for(const employee of employees){
             await Notification.create({
                 userId: employee._id,
