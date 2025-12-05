@@ -8,6 +8,7 @@ import productRoutes from "./routes/products.routes.js";
 import notifRoutes from "./routes/notifications.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import connectDB from "./db.js";
+import reportsRoutes from "./routes/reports.routes.js";
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/notifications", notifRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/reports", reportsRoutes);
 
 // Test route
 app.get("/", (req, res) => res.send("API Running"));
