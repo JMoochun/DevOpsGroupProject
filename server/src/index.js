@@ -21,8 +21,8 @@ const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
 
 // CORS - only once, matching frontend
 app.use(cors({
-  origin: CLIENT_ORIGIN,
-  credentials: true,
+    origin: CLIENT_ORIGIN,
+    credentials: true,
 }));
 
 // Passport middleware
@@ -37,11 +37,14 @@ app.use("/api/users", userRoutes);
 // Test route
 app.get("/", (req, res) => res.send("API Running"));
 
+// define PORT here
+const PORT = process.env.PORT || 5000;
+
 export default app;
 
 // Start server after DB connection
- connectDB().then(() => {
+connectDB().then(() => {
     app.listen(PORT, () =>
-      console.log(`Server running on port: ${PORT}`)
+        console.log(`Server running on port: ${PORT}`)
     );
-  });
+});
