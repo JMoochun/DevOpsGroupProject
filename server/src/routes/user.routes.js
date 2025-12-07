@@ -42,4 +42,44 @@ router.put("/me", requireAuth, async (req, res) => {
   }
 });
 
+// ====================================
+// UPDATE MUTED NOTIFICATION CATEGORIES
+// ====================================
+router.put("/notifications/preferences", requireAuth, async (req, res) => {
+  try {
+    const userId = req.user.id;                       
+    const { category, action } = req.body;            
+
+    if (!category || !action) {
+      return res.status(400).json({ message: "Category and action are required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (action === "mute") {
+      if (!user.mutedCategories.includes(category)) {
+        user.mutedCategories.push(category);
+      }
+    } else if (action === "unmute") {
+      user.mutedCategories = user.mutedCategories.filter(c => c !== category);
+    } else {
+      return res.status(400).json({ message: "Invalid action" });
+    }
+
+    await user.save();
+
+    res.json({
+      message: "Notification preferences updated",
+      mutedCategories: user.mutedCategories
+    });
+
+  } catch (err) {
+    console.error("Notification preference update error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;

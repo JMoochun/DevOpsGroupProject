@@ -6,16 +6,20 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true },
 
-    //Distinguish between employee vs manager
     role: {
         type: String,
         enum: ["employee", "manager", "accountant", "it_support"],
         default: "employee",
     },
-   
-    //required for reset-password
-    resetPasswordToken: { type: String},
-    resetPasswordExpires: { type: Date}
+
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
+
+    mutedCategories: {
+        type: [String],
+        default: []
+    }
+
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);
