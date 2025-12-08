@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios"; 
 import "../components/ProfileModal.css";
-
+import NotificationPreferences from "./NotificationPreferences";
 export default function ProfileModal({ isOpen, onClose }) {
 
     // Holds all user-editable profile fields
@@ -207,6 +207,13 @@ export default function ProfileModal({ isOpen, onClose }) {
                     <p className="field-error">{fieldErrors.email}</p>
                     )}
                 </div>
+
+                   {/* NOTIFICATION SETTINGS */}
+                <div className="profile-section">
+                    <h3>Notification Settings</h3>
+                    <NotificationPreferences compact={true} />
+                </div>
+
 
                 {/* Read-only Role (employees cannot edit role) */}
                 <div className="profile-info-row">

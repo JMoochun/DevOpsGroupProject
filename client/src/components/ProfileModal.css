@@ -133,3 +133,18 @@
 .profile-modal-secondary-btn:active {
   transform: scale(0.97);
 }
+
+/* NOTIFICATION SETTINGS SECTION */
+.profile-section {
+    margin: 20px 0;
+    padding: 16px 0;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.profile-section h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #334155;
+}
