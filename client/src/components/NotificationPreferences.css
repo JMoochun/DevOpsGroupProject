@@ -1,0 +1,113 @@
+
+.notification-preferences {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+.notification-preferences.compact {
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    max-width: 100%;
+}
+
+.notification-preferences.compact h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: #334155;
+}
+
+/* Category List */
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.category-item:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.category-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.category-info p {
+    margin: 0;
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    width: 46px;
+    height: 24px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.toggle-switch.active { 
+    background: #667eea;  /* Matches your ProfileModal accent color */
+}
+
+.toggle-switch.muted { 
+    background: #cbd5e1; 
+}
+
+.toggle-switch:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-switch.active .toggle-slider {
+    transform: translateX(22px);
+}
+
+.preferences-footer {
+    margin-top: 16px;
+    text-align: center;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.preferences-loading {
+    text-align: center;
+    padding: 2rem;
+    color: #64748b;
+}
