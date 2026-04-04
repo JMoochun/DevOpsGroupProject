@@ -10,39 +10,7 @@ export default function Inventory() {
   // =============================
   // STATE
   // =============================
-  //const [products, setProducts] = useState([]);
-  const [products, setProducts] = useState([
-  {
-    _id: "654321abcdef", // Unique ID for the product
-    sku: "LAPTOP001",
-    name: "SuperFast Laptop",
-    category: "Electronics",
-    quantity: 15,
-    costPrice: 800.00,
-    salePrice: 1200.00,
-    revenue: 400.00,
-  },
-  {
-    _id: "987654fedcba", // Another unique ID
-    sku: "BOOK005",
-    name: "React Mastery Guide",
-    category: "Books",
-    quantity: 5, // This one is low stock for testing the badge!
-    costPrice: 15.00,
-    salePrice: 25.00,
-    revenue: 10.00,
-  },
-  {
-    _id: "abcdef123456", // One more!
-    sku: "MOU003",
-    name: "Wireless Mouse",
-    category: "Accessories",
-    quantity: 30,
-    costPrice: 10.00,
-    salePrice: 20.00,
-    revenue: 10.00,
-  },
-]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -55,10 +23,8 @@ export default function Inventory() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
 
-  // Role-based access
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  //const isManager = user.role === "Manager"; //was blocking the add product button 
-  const isManager = true;
+  const isManager = user.role === "manager";
 
 
   // =============================
@@ -147,12 +113,16 @@ export default function Inventory() {
       fetchProducts();
     } catch (err) {
       alert("Failed to save product");
+      throw err;
     }
   };
 
   // =============================
   // FILTER PRODUCTS
   // =============================
+  const lowStock = (p) =>
+    p.quantity <= (p.lowStockThreshold ?? 10);
+
   const filteredProducts = products.filter((p) => {
     const matchesSearch =
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -239,7 +209,7 @@ export default function Inventory() {
           <tbody>
             {filteredProducts.length === 0 ? (
               <tr>
-                <td colSpan="9" className="no-data">
+                <td colSpan={isManager ? 9 : 8} className="no-data">
                   No products found
                 </td>
               </tr>
@@ -253,7 +223,7 @@ export default function Inventory() {
                   <td>
                     <span
                       className={`quantity-badge ${
-                        p.quantity < 10 ? "low-stock" : ""
+                        lowStock(p) ? "low-stock" : ""
                       }`}
                     >
                       {p.quantity}
@@ -267,10 +237,10 @@ export default function Inventory() {
                   <td>
                     <span
                       className={`status-badge ${
-                        p.quantity < 10 ? "status-low" : "status-good"
+                        lowStock(p) ? "status-low" : "status-good"
                       }`}
                     >
-                      {p.quantity < 10 ? "Low Stock" : "In Stock"}
+                      {lowStock(p) ? "Low Stock" : "In Stock"}
                     </span>
                   </td>
 
@@ -305,7 +275,7 @@ export default function Inventory() {
         <div className="summary-card">
           <span>Low Stock Items:</span>
           <strong className="alert">
-            {products.filter((p) => p.quantity < 10).length}
+            {products.filter((p) => lowStock(p)).length}
           </strong>
         </div>
 

@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const connectDB = async () => {
     try {
         const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
-        console.log("Mongo URI from env:", uri);
+        console.log("Mongo URI:", uri ? "(configured)" : "(missing)");
 
         if (!uri) {
             throw new Error("No Mongo URI set in env (MONGO_URI / MONGODB_URI)");

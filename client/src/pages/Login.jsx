@@ -47,8 +47,8 @@ const Login = () => {
         }
 
         try {
-            const response = await api.post('/auth/login', formData); // ✅ using correct api instance
-            login(response.data.token); // save token and update context
+            const response = await api.post('/auth/login', formData);
+            login(response.data.token, response.data.user);
             navigate('/home');          // redirect after login
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed. Please try again.');

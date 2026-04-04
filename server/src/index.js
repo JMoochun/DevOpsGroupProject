@@ -19,12 +19,17 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
+const defaultOrigins = ["http://localhost:5173", "http://127.0.0.1:5173"];
+const corsOrigins = CLIENT_ORIGIN
+    ? CLIENT_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean)
+    : defaultOrigins;
 
-// CORS - only once, matching frontend
-app.use(cors({
-    origin: CLIENT_ORIGIN,
-    credentials: true,
-}));
+app.use(
+    cors({
+        origin: corsOrigins,
+        credentials: true,
+    })
+);
 
 // Passport middleware
 app.use(passport.initialize());

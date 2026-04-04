@@ -6,27 +6,32 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        // Load user from JWT on app start
         const token = localStorage.getItem('token');
-        if (token) {
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                // Expected payload: { name, branch, role, unreadCount }
-                setUser(payload);
-            } catch (e) {
-                localStorage.removeItem('token');
-            }
+        if (!token) return;
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const stored = JSON.parse(localStorage.getItem('user') || 'null');
+            setUser(stored ? { ...payload, ...stored } : payload);
+        } catch (e) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
         }
     }, []);
 
-    const login = (token) => {
+    const login = (token, profile) => {
         localStorage.setItem('token', token);
         const payload = JSON.parse(atob(token.split('.')[1]));
-        setUser(payload);
+        if (profile) {
+            localStorage.setItem('user', JSON.stringify(profile));
+            setUser({ ...payload, ...profile });
+        } else {
+            setUser(payload);
+        }
     };
 
     const logout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setUser(null);
     };
 

@@ -6,6 +6,31 @@ import User from "../models/User.js";
 const router = express.Router();
 
 // ====================================
+// GET CURRENT USER PROFILE
+// ====================================
+router.get("/me", requireAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-passwordHash");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        mutedCategories: user.mutedCategories || [],
+      },
+    });
+  } catch (err) {
+    console.error("Get profile error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ====================================
 // UPDATE LOGGED-IN USER PROFILE (PUT)
 // ====================================
 router.put("/me", requireAuth, async (req, res) => {
@@ -33,7 +58,8 @@ router.put("/me", requireAuth, async (req, res) => {
         firstName: updatedUser.firstName,
         lastName: updatedUser.lastName,
         email: updatedUser.email,
-        role: updatedUser.role,       // Role included as read-only in response
+        role: updatedUser.role,
+        mutedCategories: updatedUser.mutedCategories || [],
       },
     });
   } catch (err) {

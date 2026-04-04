@@ -76,11 +76,18 @@ export default function ProductModal({
     return null; // no errors
 };
 
-    // Handle the submit action inside the modal
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onSubmit(formData);
-        onClose();
+        const err = validateForm();
+        if (err) {
+            alert(err);
+            return;
+        }
+        try {
+            await Promise.resolve(onSubmit(formData));
+        } catch {
+            return;
+        }
     };
 
     return (
