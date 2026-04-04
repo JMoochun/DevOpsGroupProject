@@ -21,8 +21,14 @@ Inventory app: **Express + MongoDB** API (`server/`) and **React (Vite)** UI (`c
    - `npm run dev` (default: http://localhost:5173)
 
 3. **Tests**
-   - Server: `cd server && npm test`
-   - Client: `cd client && npm test`
+   - Server: `cd server && npm test` (coverage: `npm run test:coverage`)
+   - Client: `cd client && npm test` (coverage: `npm run test:coverage`)
+
+4. **DevOps backup (Jenkins + rubric)**
+   - Root `Jenkinsfile` (CI/CD), `sonar-project.properties` (SonarQube).
+   - Full checklist: [`docs/DEVOPS_JENKINS_LAYOUT.md`](docs/DEVOPS_JENKINS_LAYOUT.md)
+   - Azure Boards checklist (UI only): [`docs/AZURE_DEVOPS_BOARDS_CHECKLIST.md`](docs/AZURE_DEVOPS_BOARDS_CHECKLIST.md)
+   - Windows quick verify: `.\scripts\verify-local-ci.ps1` (from repo root)
 
 ## Mirror to your personal GitHub
 
