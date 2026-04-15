@@ -3,9 +3,10 @@
  *
  * Prerequisites on Jenkins:
  * - Node.js 20+ on PATH for the Jenkins service account
- * - SonarQube Scanner CLI on PATH (sonar-scanner), or skip Sonar stage until installed
- * - Manage Jenkins → Configure System → SonarQube servers → name must match
- *   withSonarQubeEnv('SonarQube') below
+ * - Plugin: "SonarQube Scanner for Jenkins" (SonarSource) — REQUIRED; provides withSonarQubeEnv.
+ *   Without it you get: No such DSL method 'withSonarQubeEnv'. Install plugin + restart Jenkins.
+ * - SonarQube Scanner CLI on PATH (sonar-scanner)
+ * - Manage Jenkins → System → SonarQube servers → Name must match withSonarQubeEnv('SonarQube') below
  *
  * This repo uses `bat` steps so the job runs on Windows agents. Jenkins is often installed
  * as a service (e.g. Local System); `sh` may invoke WSL and fail with WSL_E_LOCAL_SYSTEM_NOT_SUPPORTED.
