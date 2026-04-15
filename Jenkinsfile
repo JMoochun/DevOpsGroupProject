@@ -2,15 +2,14 @@
  * COMP231 DevOps — Jenkins declarative pipeline (Node.js + React)
  *
  * Prerequisites on Jenkins:
- * - Node.js 20+ (nvm or NodeJS plugin)
- * - SonarQube Scanner CLI on PATH, OR use a Docker agent with scanner installed
- * - Jenkins: Manage Jenkins → Configure System → SonarQube servers → name must match
- *   withSonarQubeEnv('SonarQube') below (or rename to match your server entry)
- * - Pipeline job: Definition = Pipeline script from SCM; SCM Poll trigger can also be
- *   enabled in the job UI in addition to pollSCM below
+ * - Node.js 20+ on PATH for the Jenkins service account
+ * - SonarQube Scanner CLI on PATH (sonar-scanner), or skip Sonar stage until installed
+ * - Manage Jenkins → Configure System → SonarQube servers → name must match
+ *   withSonarQubeEnv('SonarQube') below
  *
- * Agents: uses `sh` (Linux/macOS agents). For Windows agents, replace `sh` with `bat`
- * and adjust commands.
+ * This repo uses `bat` steps so the job runs on Windows agents. Jenkins is often installed
+ * as a service (e.g. Local System); `sh` may invoke WSL and fail with WSL_E_LOCAL_SYSTEM_NOT_SUPPORTED.
+ * For Linux agents only, replace `bat` with `sh` and adjust the Deliver tar line if needed.
  */
 
 pipeline {
@@ -40,14 +39,14 @@ pipeline {
                 stage('Server npm ci') {
                     steps {
                         dir('server') {
-                            sh 'npm ci'
+                            bat 'npm ci'
                         }
                     }
                 }
                 stage('Client npm ci') {
                     steps {
                         dir('client') {
-                            sh 'npm ci'
+                            bat 'npm ci'
                         }
                     }
                 }
@@ -57,7 +56,7 @@ pipeline {
         stage('Build') {
             steps {
                 dir('client') {
-                    sh 'npm run build'
+                    bat 'npm run build'
                 }
             }
         }
@@ -67,14 +66,14 @@ pipeline {
                 stage('Server unit tests + coverage') {
                     steps {
                         dir('server') {
-                            sh 'npm run test:coverage'
+                            bat 'npm run test:coverage'
                         }
                     }
                 }
                 stage('Client unit tests + coverage') {
                     steps {
                         dir('client') {
-                            sh 'npm run test:coverage'
+                            bat 'npm run test:coverage'
                         }
                     }
                 }
@@ -84,26 +83,21 @@ pipeline {
         stage('SonarQube analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh 'sonar-scanner'
+                    bat 'sonar-scanner'
                 }
             }
         }
 
         stage('Deliver') {
             steps {
-                sh '''
-                    tar -czvf inventory-release.tgz \
-                      client/dist \
-                      server/package.json \
-                      server/package-lock.json \
-                      server/src
-                '''
+                // Windows 10+ includes tar.exe; run from workspace root
+                bat 'tar -czvf inventory-release.tgz client/dist server/package.json server/package-lock.json server/src'
             }
         }
 
         stage('Deploy to Development') {
             steps {
-                echo '[MOCK] Deploy artifact to Dev — replace with your script (e.g. copy to server, Docker, Azure Web App)'
+                echo '[MOCK] Deploy artifact to Dev - replace with your script (e.g. copy to server, Docker, Azure Web App)'
                 echo "Artifact: inventory-release.tgz (build ${env.BUILD_NUMBER})"
             }
         }
@@ -122,7 +116,7 @@ pipeline {
 
         stage('Deploy to Production') {
             steps {
-                echo '[MOCK] Deploy to Production — gate with approvals in real use'
+                echo '[MOCK] Deploy to Production - gate with approvals in real use'
             }
         }
     }
@@ -133,7 +127,7 @@ pipeline {
             archiveArtifacts artifacts: '**/coverage/**', allowEmptyArchive: true
         }
         success {
-            echo 'Pipeline completed successfully — open Blue Ocean to view stage graph and history.'
+            echo 'Pipeline completed successfully - open Blue Ocean to view stage graph and history.'
         }
     }
 }
