@@ -106,7 +106,11 @@ const Login = () => {
                         </Link>
                     </div>
 
-                    <button type="submit" className="btn-primary" disabled={loading}>
+                    <button
+                        type="submit"
+                        className="btn-primary"
+                        disabled={loading || !formData.email.trim() || !formData.password.trim()}
+                        >
                         {loading ? 'Logging in...' : 'Login'}
                     </button>
 
