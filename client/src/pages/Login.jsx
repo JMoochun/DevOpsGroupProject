@@ -47,17 +47,20 @@ const Login = () => {
         }
 
         try {
-            const response = await api.post('/auth/login', formData);
+            const trimmedData = {
+                email: formData.email.trim(),
+                password: formData.password.trim()
+            };
+            
+            const response = await api.post('/auth/login', trimmedData);
             login(response.data.token, response.data.user);
-            console.log("User logged in successfully:", response.data.user);
             navigate('/home');
-            } catch (err) {
-                console.error("Login error:", err);
-                setError(err.response?.data?.message || 'Login failed. Please try again.');
-            } finally {
+        } catch (err) {
+            setError(err.response?.data?.message || 'Login failed. Please try again.');
+        } finally {
             setLoading(false);
         }   
-            };
+    };
 
     return (
         <div className="auth-container">
