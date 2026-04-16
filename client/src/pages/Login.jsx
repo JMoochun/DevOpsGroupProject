@@ -49,7 +49,8 @@ const Login = () => {
         try {
             const response = await api.post('/auth/login', formData);
             login(response.data.token, response.data.user);
-            navigate('/home');          // redirect after login
+            console.log("User logged in successfully:", response.data.user);
+            navigate('/home');
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed. Please try again.');
         } finally {
