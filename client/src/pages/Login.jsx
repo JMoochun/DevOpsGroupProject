@@ -51,12 +51,13 @@ const Login = () => {
             login(response.data.token, response.data.user);
             console.log("User logged in successfully:", response.data.user);
             navigate('/home');
-        } catch (err) {
-            setError(err.response?.data?.message || 'Login failed. Please try again.');
-        } finally {
+            } catch (err) {
+                console.error("Login error:", err);
+                setError(err.response?.data?.message || 'Login failed. Please try again.');
+            } finally {
             setLoading(false);
-        }
-    };
+        }   
+            };
 
     return (
         <div className="auth-container">
