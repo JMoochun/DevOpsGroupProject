@@ -5,7 +5,8 @@
  * - Node.js 20+ on PATH for the Jenkins service account
  * - Plugin: "SonarQube Scanner for Jenkins" (SonarSource) — REQUIRED; provides withSonarQubeEnv.
  *   Without it you get: No such DSL method 'withSonarQubeEnv'. Install plugin + restart Jenkins.
- * - SonarQube Scanner CLI on PATH (sonar-scanner)
+ * - SonarQube Scanner CLI configured in Jenkins Global Tool Configuration
+ *   (recommended name: SonarScanner)
  * - Manage Jenkins → System → SonarQube servers → Name must match withSonarQubeEnv('SonarQube') below
  *
  * This repo uses `bat` steps so the job runs on Windows agents. Jenkins is often installed
@@ -84,7 +85,10 @@ pipeline {
         stage('SonarQube analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    bat 'sonar-scanner'
+                    script {
+                        def scannerHome = tool 'SonarScanner'
+                        bat "\"${scannerHome}\\bin\\sonar-scanner.bat\""
+                    }
                 }
             }
         }
